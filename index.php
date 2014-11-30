@@ -1,3 +1,29 @@
+<?php
+
+function validarRotas()
+{
+    $rota = parse_url("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+    $path = str_replace("/","",$rota['path']);
+
+    $rotasvalidas = array("contato","empresa","produtos","servicos");
+
+    $filename = 'includes/'.$path.'.php';
+    //echo $filename;die;
+
+    if(in_array($path,$rotasvalidas) and file_exists($filename)){
+
+        return require_once("includes/".$path.".php");
+    }
+    elseif ($path == ""){
+        return require_once("includes/home.php");
+    }
+    else{
+        return require_once("includes/404.php");
+    }
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -16,14 +42,7 @@
 <?php require_once("menu.php"); ?>
 
 <!-- Conteudo da pagina -->
-<?php
-
-if(isset($_GET['pagina'])) {
-    include_once("includes/". $_GET["pagina"]);
-}else{
-    include_once("includes/home.php");
-}
-?>
+<?php validarRotas(); ?>
 
 <!-- rodape -->
 <?php require_once("rodape.php"); ?>
